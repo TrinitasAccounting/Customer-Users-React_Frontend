@@ -1,9 +1,9 @@
 
 
 
-export default function EditCustomerPopUp({ handleClickEditCustomerPopUp, editCustomerForm, setEditCustomerForm }) {
+export default function EditCustomerPopUp({ handlePutUpdateCustomer, handleCustomerUpdate, handleClickEditCustomerPopUp, editCustomerForm, setEditCustomerForm }) {
 
-
+    // When the customer is editted this controls and updates the form
     function handleCustomerFormChange(event) {
         setEditCustomerForm({ ...editCustomerForm, [event.target.name]: event.target.value })
     };
@@ -21,7 +21,7 @@ export default function EditCustomerPopUp({ handleClickEditCustomerPopUp, editCu
                 <form className="block mt-5 sm:flex sm:items-center">
 
                     <div className="pl-5">
-                        <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                        <label className="block text-sm/6 font-medium text-gray-900">
                             First Name
                         </label>
                         <div className="mt-2">
@@ -36,7 +36,7 @@ export default function EditCustomerPopUp({ handleClickEditCustomerPopUp, editCu
                         </div>
                     </div>
                     <div className="pl-5">
-                        <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                        <label className="block text-sm/6 font-medium text-gray-900">
                             Last Name
                         </label>
                         <div className="mt-2">
@@ -51,7 +51,7 @@ export default function EditCustomerPopUp({ handleClickEditCustomerPopUp, editCu
                         </div>
                     </div>
                     <div className="pl-5">
-                        <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                        <label className="block text-sm/6 font-medium text-gray-900">
                             Email
                         </label>
                         <div className="mt-2">
@@ -68,17 +68,19 @@ export default function EditCustomerPopUp({ handleClickEditCustomerPopUp, editCu
 
                     <button
                         onClick={handleClickEditCustomerPopUp}
-                        type="submit"
+                        type="button"
                         className="mt-3 inline-flex w-full items-center justify-center rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:ml-3 sm:mt-0 sm:w-auto"
                     >
                         Cancel
                     </button>
                     <button
-                        type="submit"
+                        onClick={() => handlePutUpdateCustomer(editCustomerForm)}
+                        type="button"
                         className="mt-3 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:ml-3 sm:mt-0 sm:w-auto"
                     >
                         Save
                     </button>
+
                 </form>
             </div>
         </div>

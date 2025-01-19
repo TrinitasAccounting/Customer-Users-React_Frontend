@@ -1,28 +1,24 @@
 
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+// import { useOutletContext } from "react-router-dom";
 
 import AddCustomerPopUp from "./AddCustomerPopUp";
 import EditCustomerPopUp from "./EditCustomrPopUp";
 
 
-const people = [
-    { name: 'Lindsay Walton', title: 'Front-end Developer', email: 'lindsay.walton@example.com', role: 'Member' },
-    // More people...
-]
 
-export default function CustomerTable({ data, setData, addNewCustomer, handleDelete }) {
+export default function CustomerTable({ data, setData, addNewCustomer, handleDelete, onUpdateCustomer }) {
 
 
     const [showAddCustomerPopUp, setShowAddCustomerPopUp] = useState(false)
     const [showEditCustomerPopUp, setShowEditCustomerPopUp] = useState(false);
 
-    // Add New Customer Pop Up
+    // Add New Customer Pop Up toggle open or closed
     const handleClickForPopUp = () => {
         setShowAddCustomerPopUp((showAddCustomerPopUp) => !showAddCustomerPopUp)
     }
 
-    // Edit Customer Pop Up
+    // Edit Customer Pop Up Toggle open or closed
     const handleClickEditCustomerPopUp = () => {
         setShowEditCustomerPopUp(!showEditCustomerPopUp)
     }
@@ -40,23 +36,56 @@ export default function CustomerTable({ data, setData, addNewCustomer, handleDel
 
 
 
-    // Put fetch to the database
-    // const handleUpdateCustomer = (editCustomerForm) => {
-    //     // const customerUser = data.find(user => user.customerId === id)
-    //     // console.log(customerUser)
+    // ____________________________________________________________________________________
+    // This is the PUT fetch to update the customers for editting purposes
 
-    //     fetch(`https://app-jokeswebapp-web-canadacentral-dev-001-c8azfpatehgyetgk.canadacentral-01.azurewebsites.net/api/customer/${editCustomerForm.customerId}`, {
-    //         method: "PUT",
-    //         body: JSON.stringify(editCustomerForm),
-    //         headers: {
-    //             "Content-type": "application/json"
-    //         },
-    //     })
-    //     .then(response => response.json())
-    //     .then(
+    const handlePutUpdateCustomer = (editCustomerForm) => {
 
-    //     })
-    // }
+        // const updatedCustomer = {
+        //     customerId: editCustomerForm.customerId,
+        //     firstName: editCustomerForm.firstName,
+        //     lastName: editCustomerForm.lastName,
+        //     email: editCustomerForm.email
+        // }
+
+        fetch(`https://app-jokeswebapp-web-canadacentral-dev-001-c8azfpatehgyetgk.canadacentral-01.azurewebsites.net/api/customer/${editCustomerForm.customerId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(editCustomerForm),
+        })
+        // .then(response => response.json())
+        // .then(updatedCustomer => handleCustomerUpdate(updatedCustomer))
+
+
+        const frontEndUpdate = (customerData) => handleCustomerUpdate(customerData)
+        frontEndUpdate(editCustomerForm)
+    }
+
+    // _________________________________________________________________________________________________
+
+
+
+    // handling the customer update on the front end by re rendering data and closing out the edit customer pop up
+    function handleCustomerUpdate(updateCustomer) {
+        onUpdateCustomer(updateCustomer)
+        setShowEditCustomerPopUp(false);
+    }
+
+    // Updating the PUT changes on the Front end so the data will refresh when PUT is submitted
+    function onUpdateCustomer(updatedCustomer) {
+        const updatedCustomersList = data.map(
+            customer => {
+                if (customer.customerId === updatedCustomer.customerId) {
+                    return updatedCustomer
+                }
+                else { return customer }
+            }
+        )
+
+        setData(updatedCustomersList)
+    }
 
 
 
@@ -88,29 +117,32 @@ export default function CustomerTable({ data, setData, addNewCustomer, handleDel
                 <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div className="overflow-hidden shadow ring-1 ring-black/5 sm:rounded-lg">
-                            <table className="min-w-full divide-y divide-gray-300">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                            Name
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Title
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Email
-                                        </th>
-                                        <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                            <span className="sr-only">Edit</span>
-                                        </th>
-                                    </tr>
-                                </thead>
 
 
-                                {/* We are showing either the table body or the edit customer form here */}
-                                {showEditCustomerPopUp ? <EditCustomerPopUp handleClickEditCustomerPopUp={handleClickEditCustomerPopUp} editCustomerForm={editCustomerForm} setEditCustomerForm={setEditCustomerForm} /> :
+                            {/* We are showing either the table body or the edit customer form here */}
+                            {showEditCustomerPopUp ?
+                                <EditCustomerPopUp handlePutUpdateCustomer={handlePutUpdateCustomer} handleCustomerUpdate={handleCustomerUpdate} handleClickEditCustomerPopUp={handleClickEditCustomerPopUp} editCustomerForm={editCustomerForm} setEditCustomerForm={setEditCustomerForm} />
+
+                                :
 
 
+                                <table className="min-w-full divide-y divide-gray-300">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                                                Name
+                                            </th>
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                Title
+                                            </th>
+                                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                                Email
+                                            </th>
+                                            <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                                                <span className="sr-only">Edit</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
 
                                     <tbody className="divide-y divide-gray-200 bg-white">
                                         {data.map((person) => (
@@ -135,8 +167,9 @@ export default function CustomerTable({ data, setData, addNewCustomer, handleDel
                                             </tr>
                                         ))}
                                     </tbody>
-                                }
-                            </table>
+
+                                </table>
+                            }
                         </div>
                     </div>
                 </div>
